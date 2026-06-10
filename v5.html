@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Bear Moves — Stories to Bear</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#090704;--bg2:#0f0c08;--bg3:#15110c;
+  --card:#120f0a;--border:rgba(232,168,48,0.08);--border2:rgba(232,168,48,0.14);
+  --text:#e8ddd0;--text2:#7a7068;--text3:#4a4438;
+  --amber:#e8a830;--amber2:#f5c060;--amberdim:rgba(232,168,48,0.07);--amberglow:rgba(232,168,48,0.12);
+  --green:#3a9660;--green2:#52c47a;--greendim:rgba(58,150,96,0.1);
+  --red:#b84a38;--red2:#d46858;--reddim:rgba(184,74,56,0.1);
+  --blue:#4a7ec4;
+}
+html,body{height:100%;overscroll-behavior:none}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px 0}
+.wrap{width:100%;max-width:480px;padding:0 20px;margin:auto}
+.hidden{display:none!important}
+
+/* PAYPAL */
+.paypal-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(232,168,48,0.35);border-radius:100px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--amber);text-decoration:none;transition:all 0.2s;margin-top:12px}
+.paypal-btn:hover{background:var(--amberdim);border-color:var(--amber);color:var(--amber2)}
+
+/* CREDITS */
+.credits-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
+.credits-title{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.credits-list{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.credit-name{font-size:12px;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:4px 14px}
+.credit-name.creator{color:var(--amber);border-color:rgba(232,168,48,0.2)}
+
+
+/* MUSIC TOGGLE */
+.music-btn{background:transparent;border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text3);cursor:pointer;transition:all 0.2s}
+.music-btn:hover{border-color:var(--amber);color:var(--amber)}
+
+/* SPLASH BG */
+#pg-splash{
+  background-image:url('https://raw.githubusercontent.com/storiestobear/bearmoves/main/bg-vertical.jpg');
+  background-size:cover;
+  background-position:center top;
+  background-repeat:no-repeat;
+  position:relative;
+}
+#pg-splash::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(8,6,4,0.55) 0%,rgba(8,6,4,0.75) 60%,rgba(8,6,4,0.95) 100%);
+  z-index:0;
+}
+#pg-splash .splash{position:relative;z-index:1;}
+
+/* SCREEN GRAIN */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;animation:grain 0.4s steps(2) infinite;}
+@keyframes grain{0%{background-position:0 0}25%{background-position:-20px 10px}50%{background-position:10px -15px}75%{background-position:-10px 20px}100%{background-position:15px -5px}}
+
+/* BLUR PULSE — timeout only */
+body.blur-active .wrap{animation:blurP 0.6s ease-out forwards;}
+@keyframes blurP{0%{filter:blur(0)}50%{filter:blur(4px)}100%{filter:blur(0)}}
+
+/* BREATHING GLOW on scene card */
+.scene.glow-warm::before{animation:glowW 1.8s ease-out forwards}
+.scene.glow-hot::before{animation:glowH 1.8s ease-out forwards}
+.scene.glow-cold::before{opacity:0.12}
+@keyframes glowW{0%{opacity:0.1}35%{opacity:0.75}100%{opacity:0.35}}
+@keyframes glowH{0%{opacity:0.1}35%{opacity:1}100%{opacity:0.6}}
+
+.splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:40px 0}
+.splash-eye{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--amber);opacity:0.7;margin-bottom:20px}
+.splash-title{font-family:'Playfair Display',serif;font-size:clamp(56px,15vw,80px);font-weight:900;line-height:0.9;color:var(--text);margin-bottom:6px}
+.splash-title em{color:var(--amber);font-style:italic;display:block}
+.splash-sub{font-size:14px;color:var(--text2);font-weight:300;margin-bottom:48px;line-height:1.7;max-width:320px}
+.btn-primary{background:var(--amber);color:#120b00;border:none;border-radius:100px;padding:14px 40px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.btn-primary:hover{background:var(--amber2);transform:translateY(-1px)}
+.splash-lb{width:100%;margin-top:40px;border-top:1px solid var(--border);padding-top:24px}
+.splash-lb-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.step-page{padding-top:48px}
+.step-progress{display:flex;gap:6px;margin-bottom:40px}
+.step-bar{flex:1;height:2px;border-radius:2px;background:var(--border2);transition:background 0.4s}
+.step-bar.done{background:var(--green)}.step-bar.active{background:var(--amber)}
+.step-label{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.step-q{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,34px);font-weight:700;color:var(--text);margin-bottom:32px;line-height:1.2}
+.step-q span{color:var(--amber);font-style:italic}
+.name-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.name-chip{background:transparent;border:1px solid var(--border2);border-radius:100px;padding:8px 18px;font-size:14px;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.name-chip:hover{border-color:var(--amber);color:var(--text)}
+.name-chip.active{border-color:var(--amber);color:var(--amber);background:var(--amberdim)}
+.name-or{font-size:11px;color:var(--text3);text-align:center;margin:12px 0}
+.name-field{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;font-size:15px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border 0.2s;margin-bottom:32px}
+.name-field:focus{border-color:var(--amber)}.name-field::placeholder{color:var(--text3)}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px}
+.type-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.2s;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.type-card:hover{border-color:var(--border2);transform:scale(1.02)}
+.type-card.active{border-color:var(--amber);background:var(--amberdim)}
+.type-card.active .tc-name{color:var(--amber)}
+.tc-icon{font-size:32px;margin-bottom:8px}.tc-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.tc-speed{font-size:11px;color:var(--amber);opacity:0.7;margin-bottom:3px;font-style:italic}
+.tc-desc{font-size:11px;color:var(--text3);line-height:1.4}
+.step-nav{display:flex;gap:10px}
+.btn-back{background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:100px;padding:13px 20px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s}
+.btn-back:hover{color:var(--text2)}
+.btn-fwd{flex:1;background:var(--amber);color:#120b00;border:none;border-radius:100px;padding:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.btn-fwd:hover{background:var(--amber2)}.btn-fwd:disabled{opacity:0.2;cursor:default}
+.rules-page{padding-top:48px}
+.rules-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);margin-bottom:6px}
+.rules-sub{font-size:13px;color:var(--text3);margin-bottom:24px}
+.rule-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:10px}
+.rule-head{font-size:11px;font-weight:500;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.rule-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.rule-row:last-child{border-bottom:none}
+.rule-name{font-size:13px;color:var(--text)}.rule-val{font-size:13px;font-weight:500;color:var(--amber)}
+.rule-body{font-size:13px;color:var(--text2);line-height:1.65}
+.rule-body strong{color:var(--text);font-weight:500}
+.rule-drug{background:rgba(232,168,48,0.05);border:1px solid rgba(232,168,48,0.14);border-radius:14px;padding:16px 18px;margin-bottom:10px}
+.rule-drug .rule-head{color:var(--amber)}
+.btn-start-game{width:100%;background:var(--amber);color:#120b00;border:none;border-radius:100px;padding:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-top:8px}
+.btn-start-game:hover{background:var(--amber2)}
+.game-page{padding-top:20px}
+.game-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.btn-restart-mid{background:transparent;border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text3);cursor:pointer;transition:all 0.2s}
+.btn-restart-mid:hover{border-color:var(--text2);color:var(--text2)}
+.hud{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.hud-cell{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+.hud-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.meter-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--amber);margin-bottom:6px;transition:color 0.4s}
+.meter-track{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.meter-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--red),var(--amber) 50%,var(--green));transition:width 0.6s cubic-bezier(0.34,1.4,0.64,1)}
+.mood-wrap{display:flex;align-items:center;gap:10px}
+.mood-emoji{font-size:26px;transition:all 0.35s}
+.mood-him{font-size:13px;font-weight:500;color:var(--text)}.mood-vibe{font-size:11px;color:var(--text3);margin-top:2px}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.prog-label{font-size:12px;color:var(--text3);min-width:36px}
+.prog-dots{flex:1;display:flex;gap:3px}
+.prog-dot{flex:1;height:4px;border-radius:4px;background:var(--bg3);transition:all 0.3s}
+.prog-dot.done{background:var(--green)}.prog-dot.now{background:var(--amber)}
+.timer-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.timer-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3)}
+.timer-num{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--amber);transition:color 0.3s}
+.timer-num.warn{color:var(--red2)}
+.timer-track{height:3px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.timer-bar{height:100%;border-radius:3px;background:var(--amber);transition:width 1s linear,background 0.3s}
+.timer-bar.warn{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.timer-bar.crit{animation:pulse 0.45s infinite}
+.scene{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
+.scene::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:0.4}
+.scene-tag{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;opacity:0.8}
+.scene-text{font-size:14px;line-height:1.8;font-weight:300;color:var(--text)}
+.scene-text em{color:var(--amber2);font-style:normal;font-weight:500}
+.him-name{color:var(--blue);font-style:italic;font-weight:500}
+.choices{margin-bottom:10px}
+.choice{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:7px;text-align:left;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:12px;font-family:'DM Sans',sans-serif;color:var(--text)}
+.choice:hover:not(:disabled){border-color:var(--border2);background:var(--bg3)}
+.choice.chosen{border-color:var(--amber);background:var(--amberdim)}
+.choice:disabled{cursor:default}
+.ch-icon{font-size:18px;flex-shrink:0}.ch-body{flex:1}
+.ch-text{font-size:13px;line-height:1.45}.ch-tag{font-size:10px;margin-top:3px;font-weight:500}
+.tag-medium{color:var(--text3)}.tag-bold{color:var(--amber)}.tag-reckless{color:var(--red2)}
+.joker-wrap{display:flex;justify-content:center;padding:4px 0 8px}
+.btn-joker{background:rgba(232,168,48,0.06);border:1px solid rgba(232,168,48,0.18);border-radius:100px;padding:9px 22px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--amber);cursor:pointer;transition:all 0.2s}
+.btn-joker:hover{background:rgba(232,168,48,0.12);border-color:var(--amber2)}
+.btn-joker:disabled,.btn-joker.used{opacity:0.3;cursor:default;color:var(--text3);border-color:var(--border);background:transparent}
+.dice-overlay{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;justify-content:flex-end;backdrop-filter:blur(4px);background:rgba(8,6,4,0.7)}
+.dice-sheet{background:var(--bg2);border:1px solid var(--border2);border-radius:24px 24px 0 0;padding:28px 24px 48px;display:flex;flex-direction:column;align-items:center;width:100%;max-width:480px;margin:0 auto;animation:sheetUp 0.3s cubic-bezier(0.34,1.2,0.64,1)}
+@keyframes sheetUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.dice-face{font-size:72px;cursor:pointer;user-select:none;filter:drop-shadow(0 0 24px rgba(232,168,48,0.35));transition:transform 0.1s;margin-bottom:6px}
+.dice-face:hover{transform:scale(1.06)}
+.dice-face.rolling{animation:diceAnim 0.55s ease-out}
+@keyframes diceAnim{0%{transform:rotate(0) scale(1)}20%{transform:rotate(-18deg) scale(1.12)}40%{transform:rotate(14deg) scale(1.16)}60%{transform:rotate(-9deg) scale(1.12)}80%{transform:rotate(5deg) scale(1.04)}100%{transform:rotate(0) scale(1)}}
+.dice-prompt{font-size:12px;color:var(--text3);letter-spacing:0.08em;min-height:18px}
+.dice-result{text-align:center;width:100%}
+.dice-rolled-label{font-size:10px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px;margin-top:16px}
+.dice-pts{font-family:'Playfair Display',serif;font-size:34px;font-weight:900}
+.dice-pts.pos{color:var(--green2)}.dice-pts.neg{color:var(--red2)}.dice-pts.neu{color:var(--blue)}
+.dice-verdict{font-size:13px;margin-top:2px;font-weight:300}
+.dice-verdict.pos{color:var(--green2)}.dice-verdict.neg{color:var(--red2)}.dice-verdict.neu{color:var(--blue)}
+.dice-doubled{font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-top:5px;font-weight:500}
+.dice-outcome{margin-top:14px;border-radius:12px;padding:14px 16px;border:1px solid;width:100%}
+.dice-outcome.pos{background:var(--greendim);border-color:rgba(61,158,106,0.2)}
+.dice-outcome.neg{background:var(--reddim);border-color:rgba(201,79,62,0.2)}
+.dice-outcome.neu{background:rgba(74,126,196,0.08);border-color:rgba(74,126,196,0.2)}
+.dice-outcome-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;margin-bottom:6px}
+.dice-outcome.pos .dice-outcome-label{color:var(--green)}
+.dice-outcome.neg .dice-outcome-label{color:var(--red2)}
+.dice-outcome.neu .dice-outcome-label{color:var(--blue)}
+.dice-outcome-body{font-size:13px;line-height:1.65;font-style:italic;color:var(--text);font-weight:300}
+.dice-next{margin-top:14px;width:100%;background:transparent;border:1px solid var(--border2);border-radius:100px;padding:13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.dice-next:hover{border-color:var(--amber);color:var(--amber)}
+.result-page{padding-top:36px}
+.result-hero{text-align:center;padding-bottom:24px}
+.result-big{font-family:'Playfair Display',serif;font-size:clamp(40px,11vw,56px);font-weight:900;line-height:1;margin-bottom:10px}
+.result-big.great{color:var(--green2)}.result-big.ok{color:var(--amber2)}.result-big.bad{color:var(--red2)}
+.result-line{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px}
+.result-sub{font-size:13px;color:var(--text2);font-weight:300;line-height:1.6}
+.score-strip{display:flex;gap:8px;margin-bottom:16px}
+.score-box{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center}
+.score-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--amber)}
+.score-l{font-size:10px;color:var(--text3);margin-top:3px}
+.tweet-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.tweet-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.tweet-body{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:12px;font-style:italic}
+.btn-share{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:100px;padding:11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.btn-share:hover{border-color:var(--amber);color:var(--amber)}
+.patreon-card{background:rgba(232,168,48,0.05);border:1px solid rgba(232,168,48,0.15);border-radius:14px;padding:20px;margin-bottom:14px;text-align:center}
+.patreon-eye{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.patreon-text{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:16px;font-weight:300}
+.btn-patreon{display:inline-block;background:var(--amber);color:#120b00;border:none;border-radius:100px;padding:11px 28px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.2s}
+.btn-patreon:hover{background:var(--amber2)}
+.lb-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+.lb-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.lb-sub{font-size:11px;color:var(--text3);margin-bottom:12px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text3);min-width:18px}
+.lb-rank.g{color:#f5c060}.lb-rank.s{color:#b0b8c8}.lb-rank.b{color:#b87050}
+.lb-info{flex:1}.lb-name{font-size:13px;font-weight:500;color:var(--text)}
+.lb-detail{font-size:11px;color:var(--text3);margin-top:1px}
+.lb-score{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--amber)}
+.lb-score.neg{color:var(--red2)}
+.lb-you-tag{font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-left:4px}
+.lb-row.you{background:var(--amberdim);border-radius:8px;margin:0 -4px;padding:8px 4px}
+.lb-empty{font-size:13px;color:var(--text3);text-align:center;padding:14px 0}
+.result-actions{display:flex;gap:10px;margin-bottom:16px;align-items:center}
+.result-actions .btn-patreon{flex:1;text-align:center}
+.result-actions .result-paypal{margin-top:0;flex-shrink:0}
+.share-row{display:flex;gap:8px;margin-bottom:20px}
+.share-row .btn-share{flex:1;margin-bottom:0}
+.btn-insta{border-color:rgba(180,100,200,0.3);color:rgba(200,130,220,0.8)}
+.btn-insta:hover{border-color:rgba(200,130,220,0.7);color:rgba(220,150,240,1)}
+.result-tweet{font-size:13px;color:var(--text2);line-height:1.6;margin:12px 0 14px;font-style:italic;text-align:left}
+.result-share{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:100px;padding:11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text2);cursor:pointer;transition:all 0.2s;margin-bottom:20px;display:block}
+.result-share:hover{border-color:var(--amber);color:var(--amber)}
+.btn-again{width:100%;background:var(--amber);color:#120b00;border:none;border-radius:100px;padding:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-bottom:20px}
+.btn-again:hover{background:var(--amber2)}
+.footer{text-align:center;font-size:11px;color:var(--text3);padding-bottom:24px}
+.footer a{color:var(--amber);text-decoration:none}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:200;opacity:0}
+@keyframes fl{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.fl-pos{background:radial-gradient(ellipse at center,rgba(61,158,106,0.28),transparent 65%);animation:fl 0.5s forwards}
+.fl-neg{background:radial-gradient(ellipse at center,rgba(201,79,62,0.32),transparent 65%);animation:fl 0.5s forwards}
+.fl-time{background:radial-gradient(ellipse at center,rgba(74,126,196,0.28),transparent 65%);animation:fl 0.6s forwards}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.up{animation:up 0.3s ease-out}
+@keyframes slidein{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.slidein{animation:slidein 0.25s ease-out}
+
+.premium-share-row{display:block}
+.premium-share-btn{
+  width:100%;
+  background:linear-gradient(180deg,#1b140b,#120d08);
+  border:1px solid rgba(232,168,48,0.35);
+  color:var(--amber2);
+  font-size:15px;
+  padding:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.premium-share-btn:hover{
+  border-color:var(--amber2);
+  transform:translateY(-1px);
+}
+.story-card{
+  width:720px;
+  height:1280px;
+  background:
+linear-gradient(to bottom,rgba(8,6,4,0.45) 0%,rgba(8,6,4,0.82) 70%,rgba(8,6,4,0.95) 100%),
+url('https://storiestobear.github.io/bearmoves/bg-vertical.jpg');
+background-size:cover;
+background-position:center top;
+  color:#f2e7d8;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:80px;
+  position:fixed;
+  left:-99999px;
+  top:0;
+  font-family:'DM Sans',sans-serif;
+}
+.story-inner{
+  width:100%;
+  height:100%;
+  border:2px solid rgba(232,168,48,0.45);
+  border-radius:40px;
+  padding:120px 80px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle at top,rgba(232,168,48,0.08),transparent 45%);
+}
+.story-logo{
+  font-family:'Playfair Display',serif;
+  font-size:92px;
+  font-weight:900;
+  line-height:0.9;
+  margin-bottom:80px;
+}
+.story-logo em{
+  display:block;
+  color:#e8a830;
+  font-style:italic;
+}
+.story-score{
+  font-family:'Playfair Display',serif;
+  font-size:150px;
+  color:#e8a830;
+  line-height:1;
+  margin-bottom:30px;
+}
+.story-title{
+  font-size:44px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:#7f715d;
+  margin-bottom:10px;
+}
+.story-result{
+  font-size:34px;
+  line-height:1.2;
+  max-width:760px;
+  margin-bottom:60px;
+}
+.story-challenge{
+  font-size:34px;
+  color:#f5c060;
+  margin-bottom:120px;
+}
+.story-footer{
+  margin-top:auto;
+  font-size:28px;
+  line-height:1.8;
+  color:#b8a892;
+}
+.story-footer strong{
+  color:#f5c060;
+}
+
+</style>
+
+</head>
+<body>
+<audio id="bg-music" loop preload="auto">
+  <source src="https://github.com/storiestobear/bearmoves/raw/789b618e5b14c8c00a95beb5be08cd7ba2e76440/bearmovessoundtrackshort.mp3" type="audio/mpeg">
+</audio>
+<div class="wrap">
+<div id="pg-splash">
+  <div class="splash">
+    <p class="splash-eye">Stories to Bear presents</p>
+    <h1 class="splash-title">Bear<em>Moves</em></h1>
+    <p class="splash-sub">Friday night. Lucky Bar. A stranger keeps looking over. You have 10 rounds and one dice to make something happen.</p>
+    <button class="btn-primary" onclick="go(1)">Play →</button>
+    <a class="paypal-btn" href="https://www.paypal.com/donate/?hosted_button_id=DBT5JMRDECMCC" target="_blank">♡ Support the project via PayPal</a>
+    <div class="splash-lb">
+      <p class="splash-lb-title">🏆 This Week</p>
+      <p id="lb-splash-sub" style="font-size:11px;color:var(--text3);margin-bottom:12px">Loading...</p>
+      <div id="lb-splash"></div>
+    </div>
+    <div class="footer" style="margin-top:24px">by <a href="https://patreon.com/storiestobear" target="_blank">@storiestobear</a></div>
+  </div>
+</div>
+<div id="pg-s1" class="hidden step-page">
+  <div class="step-progress"><div class="step-bar active"></div><div class="step-bar"></div><div class="step-bar"></div><div class="step-bar"></div></div>
+  <p class="step-label">Step 1 of 4</p>
+  <h2 class="step-q">What's your <span>name?</span></h2>
+  <div class="name-chips" id="name-chips"></div>
+  <p class="name-or">OR</p>
+  <input class="name-field" id="name-field" type="text" placeholder="Type your name..." maxlength="18" oninput="onNameInput(this.value)">
+  <div class="step-nav">
+    <button class="btn-back" onclick="go(0)">←</button>
+    <button class="btn-fwd" id="s1-next" onclick="go(2)" disabled>Next →</button>
+  </div>
+</div>
+<div id="pg-s2" class="hidden step-page">
+  <div class="step-progress"><div class="step-bar done"></div><div class="step-bar active"></div><div class="step-bar"></div><div class="step-bar"></div></div>
+  <p class="step-label">Step 2 of 4</p>
+  <h2 class="step-q">You are —</h2>
+  <div class="type-grid" id="you-grid">
+    <div class="type-card" onclick="pick('you','gym',this)"><div class="tc-icon">💪</div><div class="tc-name">Gym Bear</div><div class="tc-speed">fast · 30s</div><div class="tc-desc">You live at the gym and it shows</div></div>
+    <div class="type-card" onclick="pick('you','daddy',this)"><div class="tc-icon">🪵</div><div class="tc-name">Daddy Bear</div><div class="tc-speed">very slow · 45s</div><div class="tc-desc">Calm, confident, never chases</div></div>
+    <div class="type-card" onclick="pick('you','cub',this)"><div class="tc-icon">🐻</div><div class="tc-name">Cub</div><div class="tc-speed">slow · 35s</div><div class="tc-desc">Adorable, chaotic, always hungry</div></div>
+    <div class="type-card" onclick="pick('you','otter',this)"><div class="tc-icon">🦦</div><div class="tc-name">Otter</div><div class="tc-speed">very fast · 25s</div><div class="tc-desc">Lean, quick, charming as hell</div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-back" onclick="go(1)">←</button>
+    <button class="btn-fwd" id="s2-next" onclick="go(3)" disabled>Next →</button>
+  </div>
+</div>
+<div id="pg-s3" class="hidden step-page">
+  <div class="step-progress"><div class="step-bar done"></div><div class="step-bar done"></div><div class="step-bar active"></div><div class="step-bar"></div></div>
+  <p class="step-label">Step 3 of 4</p>
+  <h2 class="step-q">He is —</h2>
+  <div class="type-grid" id="him-grid">
+    <div class="type-card" onclick="pick('him','gym',this)"><div class="tc-icon">💪</div><div class="tc-name">Gym Bear</div><div class="tc-speed">hard to read</div><div class="tc-desc">Power games, heavy silences</div></div>
+    <div class="type-card" onclick="pick('him','daddy',this)"><div class="tc-icon">🪵</div><div class="tc-name">Daddy Bear</div><div class="tc-speed">slow to warm</div><div class="tc-desc">Authority, patience, deep burn</div></div>
+    <div class="type-card" onclick="pick('him','cub',this)"><div class="tc-icon">🐻</div><div class="tc-name">Cub</div><div class="tc-speed">open & chaotic</div><div class="tc-desc">Fast heat, loud energy, real</div></div>
+    <div class="type-card" onclick="pick('him','otter',this)"><div class="tc-icon">🦦</div><div class="tc-name">Otter</div><div class="tc-speed">always moving</div><div class="tc-desc">Chase him or lose him</div></div>
+  </div>
+  <div class="step-nav">
+    <button class="btn-back" onclick="go(2)">←</button>
+    <button class="btn-fwd" id="s3-next" onclick="go(4)" disabled>Next →</button>
+  </div>
+</div>
+<div id="pg-rules" class="hidden rules-page">
+  <div class="step-progress"><div class="step-bar done"></div><div class="step-bar done"></div><div class="step-bar done"></div><div class="step-bar active"></div></div>
+  <h2 class="rules-title">Know the rules.</h2>
+  <p class="rules-sub">Lucky Bar doesn't forgive mistakes.</p>
+  <div class="rule-block">
+    <div class="rule-head">Your moves & dice points</div>
+    <div class="rule-row"><span class="rule-name">⚖️ Balanced</span><span class="rule-val">−1 or +1 points</span></div>
+    <div class="rule-row"><span class="rule-name">💪 Bold</span><span class="rule-val">−4 or +3 points</span></div>
+    <div class="rule-row"><span class="rule-name">🎲 Risky</span><span class="rule-val">−10 or +6 points</span></div>
+  </div>
+  <div class="rule-block">
+    <div class="rule-head">Flirt Meter</div>
+    <div class="rule-body">Tracks how much you're getting to him. It affects how each scene opens — he responds to momentum.</div>
+  </div>
+  <div class="rule-block">
+    <div class="rule-head">⏱ Timer</div>
+    <div class="rule-body">Each round has a time limit based on your type. If you freeze the dice rolls automatically — worst possible result.</div>
+  </div>
+  <div class="rule-drug">
+    <div class="rule-head">💊 Use Drugs</div>
+    <div class="rule-body"><strong>One use per game.</strong> Doubles the dice result for once — both ways. +3 becomes +6. −10 becomes −20. Be careful.</div>
+  </div>
+  <button class="btn-start-game" onclick="startGame()">Enter Lucky Bar →</button>
+</div>
+<div id="pg-game" class="hidden game-page">
+  <div class="game-topbar">
+    <button class="music-btn" id="music-btn" onclick="toggleMusic()">🔇 Music</button>
+    <button class="btn-restart-mid" onclick="confirmRestart()">↩ Restart</button>
+  </div>
+  <div class="hud">
+    <div class="hud-cell">
+      <div class="hud-label">Flirt Meter</div>
+      <div class="meter-num" id="meter-num">0</div>
+      <div class="meter-track"><div class="meter-bar" id="meter-bar" style="width:50%"></div></div>
+    </div>
+    <div class="hud-cell">
+      <div class="hud-label">His vibe</div>
+      <div class="mood-wrap">
+        <span class="mood-emoji" id="mood-emoji">😐</span>
+        <div><div class="mood-him" id="mood-him">—</div><div class="mood-vibe" id="mood-vibe">sizing you up</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="prog-row">
+    <span class="prog-label" id="prog-label">1/10</span>
+    <div class="prog-dots" id="prog-dots"></div>
+  </div>
+  <div class="timer-row"><span class="timer-label">Time</span><span class="timer-num" id="timer-num">30</span></div>
+  <div class="timer-track"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+  <div class="scene up" id="scene-box">
+    <div class="scene-tag" id="scene-tag">Round 1 · Lucky Bar</div>
+    <p class="scene-text" id="scene-text"></p>
+  </div>
+  <div class="choices" id="choices-area"></div>
+  <div class="joker-wrap">
+    <button class="btn-joker" id="btn-joker" onclick="useJoker()">💊 Use Drugs &nbsp;·&nbsp; doubles this round’s dice score</button>
+  </div>
+</div>
+<div class="dice-overlay hidden" id="dice-overlay">
+  <div class="dice-sheet">
+    <div class="dice-face" id="dice-face" onclick="rollDice()">🎲</div>
+    <p class="dice-prompt" id="dice-prompt">Tap to roll</p>
+    <div class="dice-result hidden" id="dice-result">
+      <div class="dice-rolled-label">You rolled</div>
+      <div class="dice-pts" id="dice-pts"></div>
+      <div class="dice-verdict" id="dice-verdict"></div>
+      <div class="dice-doubled hidden" id="dice-doubled">⚡ DOUBLED — Use Drugs effect</div>
+    </div>
+    <div class="dice-outcome hidden" id="dice-outcome">
+      <div class="dice-outcome-label" id="dice-outcome-label"></div>
+      <div class="dice-outcome-body" id="dice-outcome-body"></div>
+    </div>
+    <button class="dice-next hidden" id="dice-next-btn" onclick="closeDiceNext()">Next round →</button>
+  </div>
+</div>
+<div id="pg-result" class="hidden result-page">
+  <div class="result-hero">
+    <div class="result-big" id="res-big"></div>
+    <div class="result-line" id="res-line"></div>
+    <div class="result-sub" id="res-sub"></div>
+    <div class="tweet-body result-tweet" id="tweet-body"></div>
+    <div class="share-row premium-share-row">
+      <button class="btn-share premium-share-btn" onclick="shareResult()">📲 Share Result</button>
+    </div>
+  </div>
+  <div class="score-strip">
+    <div class="score-box"><div class="score-n" id="st-score"></div><div class="score-l">Flirt Meter</div></div>
+    <div class="score-box"><div class="score-n" id="st-wins"></div><div class="score-l">Wins</div></div>
+    <div class="score-box"><div class="score-n" id="st-losses"></div><div class="score-l">Misses</div></div>
+  </div>
+  <div class="result-actions">
+    <a class="btn-patreon" href="https://patreon.com/storiestobear" target="_blank">More on Patreon</a>
+    <a class="paypal-btn result-paypal" href="https://www.paypal.com/donate/?hosted_button_id=DBT5JMRDECMCC" target="_blank">♡ Support the project via PayPal</a>
+  </div>
+  <div class="lb-box">
+    <div class="lb-title">🏆 This Week's Leaderboard</div>
+    <div class="lb-sub" id="lb-result-sub">Saving score...</div>
+    <div id="lb-result"></div>
+  </div>
+  <button class="btn-again" onclick="restart()">Play again</button>
+  <div class="footer">by <a href="https://patreon.com/storiestobear" target="_blank">@storiestobear</a></div>
+  <div class="credits-box">
+    <div class="credits-title">CREDITS ✦ SUPPORTERS</div>
+    <div class="credits-list">
+      <span class="credit-name creator">Stories to Bear</span>
+    </div>
+  </div>
+</div>
+</div>
+<div id="restart-confirm" class="hidden" style="position:fixed;inset:0;z-index:300;background:rgba(9,7,4,0.88);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#110e0a;border:1px solid rgba(232,168,48,0.15);border-radius:20px;padding:28px 24px;max-width:300px;width:90%;text-align:center">
+    <div style="font-family:serif;font-size:22px;color:#e8ddd0;margin-bottom:8px">Restart?</div>
+    <div style="font-size:13px;color:#46413c;margin-bottom:24px">Your progress will be lost.</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="document.getElementById('restart-confirm').classList.add('hidden')" style="flex:1;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:12px;font-family:sans-serif;font-size:14px;color:#8a8278;cursor:pointer">Cancel</button>
+      <button onclick="document.getElementById('restart-confirm').classList.add('hidden');restart()" style="flex:1;background:#e8a830;border:none;border-radius:100px;padding:12px;font-family:sans-serif;font-size:14px;font-weight:500;color:#120b00;cursor:pointer">Restart</button>
+    </div>
+  </div>
+</div>
+<div id="flash"></div>
+
+<script>
+
+const NAMES=["Alex","Andre","Angelo","Antonio","Axel","Bear","Blake","Brady","Brett","Bruno","Buck","Carlo","Casey","Chase","Chris","Clay","Cole","Connor","Cruz","Dante","Dean","Derek","Dino","Dom","Drew","Duke","Dylan","Eddie","Eli","Emre","Ethan","Felix","Finn","Ford","Franco","Gabe","Grant","Grey","Hank","Harper","Hassan","Hudson","Hugo","Hunter","Ian","Ivan","Jack","Jaden","Jake","Jamie","Javier","Jesse","Joel","Joey","Jordan","Jose","Juan","Jules","Kai","Kane","Kenzo","Kyle","Lars","Leo","Levi","Liam","Logan","Luca","Luis","Marco","Marcus","Mason","Mateo","Matt","Max","Milo","Morgan","Nash","Nathan","Nico","Noah","Noel","Omar","Oscar","Owen","Pablo","Parker","Pax","Pedro","Quinn","Rafael","Reed","Rex","Rhys","Riley","Rio","Rob","Roman","Rory","Rui","Ryder","Sam","Santiago","Saul","Sean","Seth","Silas","Soren","Stefan","Stone","Sven","Tai","Tate","Theo","Tomas","Tony","Trey","Troy","Tyler","Val","Victor","Wade","West","Will","Xander","Zach","Zane","Zeke"];
+const DF=["⚀","⚁","⚂","⚃","⚄","⚅"];
+const TIMERS={gym:30,cub:35,daddy:45,otter:25};
+const MOODS=[{min:-999,f:"😒"},{min:-8,f:"😐"},{min:-2,f:"🙂"},{min:4,f:"😏"},{min:12,f:"🔥"}];
+const VIBES={gym:{c:"sizing you up",w:"liking what he sees",h:"all yours"},daddy:{c:"not easily impressed",w:"warming up slowly",h:"you've got his full attention"},cub:{c:"a little nervous",w:"opening up fast",h:"completely gone for you"},otter:{c:"looking for an exit",w:"slowing down for you",h:"can't stop watching"}};
+const RISK={medium:{range:[3,4],neg:-1,pos:1,label:"balanced",cls:"tag-medium"},bold:{range:[2,5],neg:-4,pos:3,label:"bold",cls:"tag-bold"},reckless:{range:[1,6],neg:-10,pos:6,label:"risky",cls:"tag-reckless"}};
+
+const SCENES={
+gym:[
+{m:{cold:"He catches you first. Doesn't look away.",warm:"He's been tracking you since you walked in.",hot:"He hasn't looked anywhere else since you arrived."},mem:{pos:"He's been holding that same position since your last move. Waiting.",neg:"He shifted slightly. You lost something there."},s:"He catches you looking. \"Something funny?\"",c:[{e:"🍺",t:"Just people watching.",r:"medium"},{e:"😏",t:"You always this suspicious?",r:"bold"},{e:"🔥",t:"No. I was deciding whether you're intimidating or just pretty.",r:"reckless"}]},
+{m:{cold:"He's listening. Not volunteering anything.",warm:"He's still testing you but the edge has softened.",hot:"He stopped measuring. He's just here now."},mem:{pos:"He's more open than before. That answer worked.",neg:"He pulled back slightly. That one missed."},s:"He takes a sip. Says nothing.",c:[{e:"🍺",t:"Comfortable silence.",r:"medium"},{e:"😏",t:"You don't waste many words, huh?",r:"bold"},{e:"🔥",t:"Blink twice if you're secretly judging me.",r:"reckless"}]},
+{m:{cold:"The bar is loud. He's comfortable in his space.",warm:"He's been gradually closing the distance.",hot:"He's very close now and not hiding it."},mem:{pos:"He leaned into the last round. Still there.",neg:"He created distance after that. Noted."},s:"Someone squeezes past and bumps into him. The other guy apologizes immediately.",c:[{e:"🍺",t:"Occupational hazard of crowded bars.",r:"medium"},{e:"😏",t:"Happens often?",r:"bold"},{e:"🔥",t:"Be honest. When was the last time somebody won a shoulder-check against you?",r:"reckless"}]},
+{m:{cold:"He's watching. Not giving much.",warm:"He's engaged. Curious about your answer.",hot:"He's leaning in. This matters to him."},mem:{pos:"He laughed at that. Small but real.",neg:"He went quiet. That hit somewhere awkward."},s:"He asks where you're from.",c:[{e:"🍺",t:"Tell him.",r:"medium"},{e:"😏",t:"That's your first real question tonight.",r:"bold"},{e:"🔥",t:"Careful. Ask enough questions and I'll think you're flirting.",r:"reckless"}]},
+{m:{cold:"Interruption. The room shifted.",warm:"He handled it without losing the thread.",hot:"He made it clear you were the priority."},mem:{pos:"He came right back. That meant something.",neg:"The interruption cost something. Rebuilding."},s:"He mentions training before work.",c:[{e:"🍺",t:"That's discipline.",r:"medium"},{e:"😏",t:"So this is what commitment looks like.",r:"bold"},{e:"🔥",t:"Serious question. How much chicken had to die for this lifestyle?",r:"reckless"}]},
+{m:{cold:"Back to the two of you. He reset.",warm:"He turned back immediately. Like the interruption was just noise.",hot:"He was already back before the friend cleared the door."},mem:{pos:"He opened up after that. Looser now.",neg:"He went careful again. Guard back up."},s:"A long pause. Neither of you fills it.",c:[{e:"🍺",t:"Let it sit.",r:"medium"},{e:"😏",t:"You enjoy making people uncomfortable.",r:"bold"},{e:"🔥",t:"I'm starting to think this silence is foreplay for you.",r:"reckless"}]},
+{m:{cold:"He's watching to see how you take this.",warm:"He's testing you. The right answer matters.",hot:"He already knows your answer. He wants to hear it anyway."},mem:{pos:"He smiled at that. Brief but there.",neg:"He went flat. That wasn't the answer."},s:"For the first time, he laughs.",c:[{e:"🍺",t:"There it is.",r:"medium"},{e:"😏",t:"Good. I was worried smiling wasn't allowed.",r:"bold"},{e:"🔥",t:"Nice. You almost look approachable now.",r:"reckless"}]},
+{m:{cold:"Getting late. He's finishing up.",warm:"Getting late. He hasn't moved to leave.",hot:"Getting late. He ordered another without asking."},mem:{pos:"Close now. That last move landed well.",neg:"He's present but there's a gap. Still time."},s:"He notices you glance at his arm. Doesn't comment.",c:[{e:"🍺",t:"Continue talking normally.",r:"medium"},{e:"😏",t:"Caught me.",r:"bold"},{e:"🔥",t:"In my defense, those things enter the room before you do.",r:"reckless"}]},
+{m:{cold:"Very close now. Neither of you speaking.",warm:"His knee against yours. Both of you still.",hot:"Knees touching. The gap between you is nothing."},mem:{pos:"He held that. Not moving. Decided.",neg:"He almost did something. Didn't. One more chance."},s:"The bartender starts cleaning up. Neither of you has left.",c:[{e:"🍺",t:"Nice place.",r:"medium"},{e:"😏",t:"You've stayed longer than I expected.",r:"bold"},{e:"🔥",t:"If I leave first, are you gonna pretend you don't care?",r:"reckless"}]},
+{m:{cold:"Last call. He's reaching for his jacket.",warm:"Last call. He hasn't moved yet.",hot:"Last call. He's not going anywhere."},mem:{pos:"Everything led here. Make this count.",neg:"Last shot. Make it land."},s:"He looks at you for a second longer than usual.",c:[{e:"🍺",t:"Good night?",r:"medium"},{e:"😏",t:"So what's your verdict?",r:"bold"},{e:"🔥",t:"One last question. Are ridiculously muscular men actually good in bed, or is that just marketing?",r:"reckless"}]}
+],
+daddy:[
+{m:{cold:"He's at the bar alone. Settled. Not looking for anything.",warm:"He's been nursing that drink a while. His eyes moved when you walked in.",hot:"He looked up when you came in and hasn't fully looked away since."},mem:{pos:"He acknowledged you without performing it.",neg:"He let his eyes slide past you. Unconvinced."},s:"He looks up when you arrive, then returns to his drink. \"First time here?\"",c:[{e:"🍺",t:"Yeah. Still figuring the place out.",r:"medium"},{e:"😏",t:"You ask that to everyone or just the ones you like?",r:"bold"},{e:"🔥",t:"Good. Then neither of us has to pretend you didn't notice me when I walked in.",r:"reckless"}]},
+{m:{cold:"He answers what you ask. Doesn't offer more.",warm:"He's started asking things back. That means something from him.",hot:"He's talking to you like he forgets he's in a bar."},mem:{pos:"He's relaxed into this. Something settled in him.",neg:"He's still measured. Enough. Not more."},s:"He listens quietly. \"Most people talk too much.\"",c:[{e:"🍺",t:"You're probably right.",r:"medium"},{e:"😏",t:"That's because most people are trying too hard.",r:"bold"},{e:"🔥",t:"Funny. I was just thinking you're the kind of man people try to impress without realizing it.",r:"reckless"}]},
+{m:{cold:"The bar filled. He created space. Precise about it.",warm:"The crowd pushed in. He didn't move away.",hot:"He put his hand on the bar beside yours when someone came through. Claiming the territory."},mem:{pos:"He's been steady. Solid. Present.",neg:"He's been careful. Precisely not close."},s:"He studies you for a second. \"What do you do when you're not here?\"",c:[{e:"🍺",t:"Depends on the day.",r:"medium"},{e:"😏",t:"Avoid making eye contact with dangerous men in bars.",r:"bold"},{e:"🔥",t:"Usually? Better decisions than this.",r:"reckless"}]},
+{m:{cold:"He mentions being alone. Flat. Like a report.",warm:"He mentions something personal. First time.",hot:"He told you something real. Kept eye contact the whole time."},mem:{pos:"He trusts you with something true.",neg:"He retreated into facts again."},s:"A silence settles between you. He seems perfectly comfortable with it.",c:[{e:"🍺",t:"Let the silence sit.",r:"medium"},{e:"😏",t:"You're enjoying this way too much.",r:"bold"},{e:"🔥",t:"If this is a staring contest, I should warn you I'm extremely competitive.",r:"reckless"}]},
+{m:{cold:"Friend arrived. {H} handled it. You were briefly background.",warm:"{H} kept you in the frame. Made sure of it.",hot:"He put his hand briefly on your shoulder when introducing you. Like you were already his."},mem:{pos:"You held ground through the interruption.",neg:"The interruption thinned something."},s:"His phone buzzes. He ignores it.",c:[{e:"🍺",t:"Must not be important.",r:"medium"},{e:"😏",t:"Or you're pretending it's not important.",r:"bold"},{e:"🔥",t:"Tell them you're busy making a questionable life choice.",r:"reckless"}]},
+{m:{cold:"Just the two of you again. He picked up his drink. Reset.",warm:"Friend left and he turned back immediately.",hot:"He moved closer when his friend left. Quiet about it. Deliberate."},mem:{pos:"There's an ease between you now that took time to earn.",neg:"The friend broke the rhythm. Building again."},s:"He nods toward your drink. \"Good choice.\"",c:[{e:"🍺",t:"I'll take the compliment.",r:"medium"},{e:"😏",t:"Careful. You're starting to sound impressed.",r:"bold"},{e:"🔥",t:"That's the second nice thing you've said. At this rate I'll think you're flirting.",r:"reckless"}]},
+{m:{cold:"He mentioned he hasn't been with anyone. Said it carefully.",warm:"He said it and held your gaze. Testing.",hot:"He said it with something underneath. A door. Left open."},mem:{pos:"He offered truth. This is where you decide what you are.",neg:"He said it and read you. Jury's still out."},s:"He folds his arms. \"What's your worst habit?\"",c:[{e:"🍺",t:"Overthinking.",r:"medium"},{e:"😏",t:"Pushing my luck.",r:"bold"},{e:"🔥",t:"Looking authority figures directly in the eyes and refusing to behave.",r:"reckless"}]},
+{m:{cold:"Late. He's deciding whether to leave.",warm:"Late. He's not going anywhere. That's a decision.",hot:"Late. He hasn't moved in an hour. His hand has been on your thigh for the last two songs."},mem:{pos:"The night built something. Don't rush it now.",neg:"Something cooled. This is the chance to warm it back."},s:"He watches you over the rim of his glass. \"You're hard to read.\"",c:[{e:"🍺",t:"Most people say that.",r:"medium"},{e:"😏",t:"That's because I don't give away the ending.",r:"bold"},{e:"🔥",t:"That's okay. I've been making up stories about you all night anyway.",r:"reckless"}]},
+{m:{cold:"Side by side. Night almost over. The quiet is unresolved.",warm:"His shoulder against yours. His glass empty. Neither of you moving.",hot:"His hand is on your thigh and he's looking at you like he's already made a decision."},mem:{pos:"The whole night was foreplay. This is the part where it becomes something.",neg:"Still something between you. Not done."},s:"The crowd has thinned. \"Enjoying yourself?\"",c:[{e:"🍺",t:"Yeah. More than I expected.",r:"medium"},{e:"😏",t:"I would've left otherwise.",r:"bold"},{e:"🔥",t:"Honestly? I was hoping you'd give me a reason to stay.",r:"reckless"}]},
+{m:{cold:"Last call. He stood. Jacket in hand.",warm:"Last call. He's slow to stand. His hand is still on you.",hot:"Last call. He hasn't moved his hand at all. He's waiting for you to decide."},mem:{pos:"You've earned whatever comes next.",neg:"Night is closing. One move left."},s:"Last call. He looks at you. Waiting.",c:[{e:"🍺",t:"It was good meeting you.",r:"medium"},{e:"😏",t:"So are you always this patient or am I getting special treatment?",r:"bold"},{e:"🔥",t:"I still can't decide if you want another drink or to interrogate me in a dark room somewhere.",r:"reckless"}]}
+],
+cub:[
+{m:{cold:"He's at the bar. Nervous energy. Eyes everywhere.",warm:"He's been glancing over. Quick. Like he keeps catching himself.",hot:"He's been watching you since you walked in and grinning when you catch him."},mem:{pos:"He waved when you caught him looking. Couldn't help himself.",neg:"He looked away too fast."},s:"He's staring at the drink menu like it insulted him. \"Why are there like… six types of soda water?\"",c:[{e:"🍹",t:"Because people ran out of personality.",r:"medium"},{e:"😏",t:"You seem personally offended by carbonation.",r:"bold"},{e:"🔥",t:"Pick one randomly. Life is just guessing anyway. So am I.",r:"reckless"}]},
+{m:{cold:"He's talking but keeps editing himself.",warm:"He's talking fast. Laughing easy. Touching your arm when he does.",hot:"He stopped being nervous. He keeps finding reasons to touch you."},mem:{pos:"He touched your arm when he laughed. Didn't notice he did it.",neg:"He's still holding back. Checking himself."},s:"He finally orders something, then immediately doubts it. \"If this tastes bad, I'm blaming physics.\"",c:[{e:"🍹",t:"Fair system.",r:"medium"},{e:"😏",t:"You look like you blame physics often.",r:"bold"},{e:"🔥",t:"If it's bad I'll drink yours too. That feels like destiny.",r:"reckless"}]},
+{m:{cold:"Bar got busy. He got smaller. Pulled in.",warm:"Someone bumped him and he grabbed your arm automatically.",hot:"He's been pressed against you in the crowd and neither of you has tried to fix it."},mem:{pos:"He's comfortable against you. Physical. Natural.",neg:"The crowd made him retreat."},s:"He laughs at something he said to himself. Nobody else heard it. \"Okay that was funny, don't worry about it.\"",c:[{e:"🍹",t:"I wasn't worrying.",r:"medium"},{e:"😏",t:"You always narrate your own jokes?",r:"bold"},{e:"🔥",t:"I like people who entertain themselves. It's a warning sign.",r:"reckless"}]},
+{m:{cold:"He mentioned moving here alone. Said it flat.",warm:"He opened up about starting over. The hope in it.",hot:"He told you everything. You're the first person tonight he's actually talked to."},mem:{pos:"He trusts you. Handle it like it matters.",neg:"He shared something and then got shy."},s:"He leans closer just to hear the music better, not you. Still ends up closer to you. \"Is this song good or am I just tired?\"",c:[{e:"🍹",t:"It's fine.",r:"medium"},{e:"😏",t:"You're just tired.",r:"bold"},{e:"🔥",t:"Depends. Are you always this close when you're confused?",r:"reckless"}]},
+{m:{cold:"Friend arrived. {H} performed. Louder, slightly away from you.",warm:"He kept looking at you over his friend's shoulder.",hot:"He grabbed your wrist when the friend tried to pull him away."},mem:{pos:"He chose you in the crowd.",neg:"The friend stole his attention."},s:"He suddenly points at your drink. \"That looks like it could either fix my life or ruin it.\"",c:[{e:"🍹",t:"Probably neither.",r:"medium"},{e:"😏",t:"You should try it and find out.",r:"bold"},{e:"🔥",t:"Take it. If it ruins your life, we'll share the responsibility.",r:"reckless"}]},
+{m:{cold:"Friend's gone. {H} exhaled. A little lost.",warm:"Friend left and he turned back grinning. 'Sorry about that.'",hot:"He was texting his friend to leave. You saw it."},mem:{pos:"He's warm. Easy. Right here.",neg:"The friend took something."},s:"He gets excited mid-story and completely forgets the ending. \"Wait—no I had a point, I swear.\"",c:[{e:"🍹",t:"It's okay, I follow you.",r:"medium"},{e:"😏",t:"You never had a point.",r:"bold"},{e:"🔥",t:"I think the point was me listening to you anyway.",r:"reckless"}]},
+{m:{cold:"He mentioned being single. Laughed too fast.",warm:"He said it seriously. He's been thinking about it.",hot:"He said it and looked right at you. Both of you know what he means."},mem:{pos:"He's real with you. Be real back.",neg:"He retreated into the joke."},s:"He stares at your face for a second too long. \"You always look like you know something I don't.\"",c:[{e:"🍹",t:"I don't.",r:"medium"},{e:"😏",t:"Maybe you're just easy to read.",r:"bold"},{e:"🔥",t:"Maybe I'm deciding whether to make this night your problem or mine.",r:"reckless"}]},
+{m:{cold:"Late. His energy dropping.",warm:"Late. He hasn't checked his phone once.",hot:"Late. He suggested another round and pulled his stool so close your legs are tangled."},mem:{pos:"The whole night has been building heat between you.",neg:"There's a gap. Small but real."},s:"He bumps your knee under the table and notices too late. \"Okay that was not planned.\"",c:[{e:"🍹",t:"It's fine.",r:"medium"},{e:"😏",t:"You say that like anything you do is planned.",r:"bold"},{e:"🔥",t:"Do it again. Let's see if it becomes a pattern.",r:"reckless"}]},
+{m:{cold:"Side by side. Him a little still.",warm:"His whole leg against yours. His drink empty.",hot:"He's turned toward you fully. One hand on your thigh, one playing with your sleeve."},mem:{pos:"He's been getting closer all night like it was inevitable.",neg:"Almost. Not quite. Still time."},s:"He suddenly gets serious for half a second. \"Are you actually enjoying this or just polite?\"",c:[{e:"🍹",t:"I am.",r:"medium"},{e:"😏",t:"Why? Do I seem bored?",r:"bold"},{e:"🔥",t:"If I wasn't enjoying it, I'd already be gone. Think about that.",r:"reckless"}]},
+{m:{cold:"He's pulling on his jacket. Last call was a deadline.",warm:"He's slow about leaving. Watching you.",hot:"He hasn't touched his jacket. His hand is still on you."},mem:{pos:"Everything built toward this.",neg:"It's close. One good move tips it."},s:"Last call. He's still there. Not moving. \"So what now?\"",c:[{e:"🍹",t:"We probably leave soon.",r:"medium"},{e:"😏",t:"You asking or stalling?",r:"bold"},{e:"🔥",t:"We decide if this becomes a story we tell or a mistake we repeat.",r:"reckless"}]}
+],
+otter:[
+{m:{cold:"He's at the bar. Already mid-conversation with someone else.",warm:"He noticed you come in. He's been keeping track while pretending not to.",hot:"He's been clocking you since you walked in. Waiting to see if you'll play."},mem:{pos:"He came back to your eye line. That was a choice.",neg:"He let his attention drift."},s:"He leans on the bar, mid-conversation with someone else, then turns to you like continuation is natural. \"You were saying something? Or were you just looking?\"",c:[{e:"🍹",t:"Just saying hi.",r:"medium"},{e:"😏",t:"You multitask people like this often?",r:"bold"},{e:"🔥",t:"I wasn't looking. I was timing when you'd notice me.",r:"reckless"}]},
+{m:{cold:"He's talking fast. Performing.",warm:"He slowed down. Actually asking things now.",hot:"He stopped moving. His knee pressed against yours."},mem:{pos:"He matched your pace instead of his own.",neg:"He's back in performance mode."},s:"He laughs at something across the room, then comes back into your sentence like nothing broke. \"Okay continue — I think I caught the idea.\"",c:[{e:"🍹",t:"You didn't.",r:"medium"},{e:"😏",t:"You catch things late, don't you?",r:"bold"},{e:"🔥",t:"You're not supposed to catch it all. Just enough of me.",r:"reckless"}]},
+{m:{cold:"He kept himself just outside arm's reach.",warm:"He brushed past you and didn't go wide.",hot:"He keeps finding reasons to be in your space."},mem:{pos:"He stopped putting distance between you.",neg:"He's keeping the gap."},s:"He shifts closer, then immediately looks away to respond to something behind him — still listening. \"I'm here. Keep going.\"",c:[{e:"🍹",t:"Alright.",r:"medium"},{e:"😏",t:"You say that while not fully here.",r:"bold"},{e:"🔥",t:"Then prove it by not splitting your attention this time.",r:"reckless"}]},
+{m:{cold:"He mentioned the city fast. Moved on before you could follow.",warm:"He mentioned it. Paused. Actually wanted to land there.",hot:"He told you something real and his hand found your knee when he said it."},mem:{pos:"He let something be real for a second.",neg:"He's back on the surface."},s:"He interrupts himself mid-answer, then changes direction smoothly. \"Wait—no—actually that's not important. You were asking?\"",c:[{e:"🍹",t:"I was.",r:"medium"},{e:"😏",t:"You lose your own thoughts mid-flight.",r:"bold"},{e:"🔥",t:"Stay with one thing. Me.",r:"reckless"}]},
+{m:{cold:"Friend arrived. {H} lit up. Back in his element.",warm:"He brought you into the conversation.",hot:"He barely looked at his friend. Hand stayed on you the whole time."},mem:{pos:"You held ground. He noticed.",neg:"The friend pulled the room."},s:"He watches you while also reacting to movement in the room — both real attention. \"You don't talk like most people here.\"",c:[{e:"🍹",t:"Good?",r:"medium"},{e:"😏",t:"Neither do you.",r:"bold"},{e:"🔥",t:"Most people here don't deserve my full attention anyway.",r:"reckless"}]},
+{m:{cold:"Friend's gone. {H} already scanning the room again.",warm:"He turned back to you mid-sentence.",hot:"He told his friend to go. You heard it."},mem:{pos:"He chose to stay.",neg:"He's still restless. One foot still in the room."},s:"He smiles slightly, like he's testing how you react. \"Okay, you're interesting. But I'm still deciding.\"",c:[{e:"🍹",t:"Take your time.",r:"medium"},{e:"😏",t:"You always decide late?",r:"bold"},{e:"🔥",t:"Don't decide. Just stay.",r:"reckless"}]},
+{m:{cold:"He mentioned being single. Threw it in between other things.",warm:"He said it and watched your face.",hot:"He said it with eye contact. Both hands on you now."},mem:{pos:"He's put a card down.",neg:"He's still moving fast."},s:"He leans in, then stops halfway to answer someone else, then comes back to you. \"Sorry—what were you saying?\"",c:[{e:"🍹",t:"Doesn't matter.",r:"medium"},{e:"😏",t:"You're juggling realities.",r:"bold"},{e:"🔥",t:"I don't repeat myself to split attention.",r:"reckless"}]},
+{m:{cold:"He's still moving. The night thinning.",warm:"He's slowed down. Keeps coming back to you.",hot:"He stopped looking around the room. Just you now."},mem:{pos:"The night has him. Don't let it slip.",neg:"He's getting restless."},s:"He laughs, fully this time, at something you said earlier — delayed reaction. \"Oh wait—that was actually good.\"",c:[{e:"🍹",t:"Took you a while.",r:"medium"},{e:"😏",t:"You process life in reruns.",r:"bold"},{e:"🔥",t:"Catch up. I'm not slowing down again.",r:"reckless"}]},
+{m:{cold:"He's still. Unusual. Like he ran out of directions.",warm:"His whole leg against yours. Both hands quiet.",hot:"He put his arm on the bar behind you. Surrounding you without touching you. Yet."},mem:{pos:"He stopped running.",neg:"He's quiet in a way that could tip anywhere."},s:"He finally holds eye contact longer than usual — then breaks it on purpose. \"I can stay focused if I want to.\"",c:[{e:"🍹",t:"Prove it.",r:"medium"},{e:"😏",t:"Do you want to though?",r:"bold"},{e:"🔥",t:"Then stay with me, not the room.",r:"reckless"}]},
+{m:{cold:"He's already moving toward the door in his head.",warm:"He's slow to stand.",hot:"He's not going anywhere. His hands are still on you."},mem:{pos:"Everything tonight led here.",neg:"It's close. One good move tips it."},s:"He steps back slightly, like resetting the space between you. \"So… are we continuing this or are you letting it drift?\"",c:[{e:"🍹",t:"We continue.",r:"medium"},{e:"😏",t:"You were drifting first.",r:"bold"},{e:"🔥",t:"I don't chase. I set the pace. Try keeping up.",r:"reckless"}]}
+]};
+
+const POS_OUTCOMES={
+  gym:[
+    "He nods. Once. That's all you get — and it's enough.",
+    "He doesn't look away. Holds it a beat longer than necessary.",
+    "'Hm.' But this time with the corner of his mouth.",
+    "He sets his drink down. Full attention. You have it.",
+    "He exhales slowly. Something in him settled.",
+    "He leans half an inch closer. Doesn't acknowledge it.",
+    "His knee stays against yours. That's an answer."
+  ],
+  daddy:[
+    "He doesn't respond immediately. Just looks at you. Then: 'Fair enough.'",
+    "A pause. Then something that almost looks like a smile.",
+    "'You're not what I expected.' He doesn't explain that.",
+    "He picks up his drink slowly. Eyes still on you.",
+    "He tilts his head slightly. Still deciding — but differently now.",
+    "'Careful.' Said quietly. Like a warning he doesn't mean.",
+    "He uncrosses his arms. Small thing. Not small."
+  ],
+  cub:[
+    "He laughs — the real one, not the polite one. 'Okay. Okay that was good.'",
+    "'Wait—' He points at you. 'That was actually a good answer.'",
+    "He bumps your shoulder. Doesn't pull back.",
+    "'You're kind of a lot.' He's smiling when he says it.",
+    "He forgets what he was saying. Blames you. Doesn't mind.",
+    "He leans in slightly. Eyes bright. You have him.",
+    "'I was not expecting that.' Best thing he's said all night."
+  ],
+  otter:[
+    "He stops mid-sentence. Actually stops. 'Wait — say that again.'",
+    "He laughs, delayed — then looks at you differently.",
+    "'Okay.' Just that. But he stopped moving.",
+    "He turns fully toward you. First time all night.",
+    "He stays. Doesn't scan the room. Just stays.",
+    "'You're harder to read than I thought.' He sounds pleased.",
+    "His full attention. Finally. You earned it."
+  ]
+};
+const NEG_OUTCOMES={
+  gym:[
+    "He looks at his glass. Back to the room. Not at you.",
+    "'Hm.' Flat. The conversation reset.",
+    "He straightens up. A little more closed than before.",
+    "He takes a sip. Doesn't respond. You're being evaluated.",
+    "He shifts his weight. Gap opened. Your move.",
+    "Nothing. He just waited for you to continue. You didn't.",
+    "He nods once. Polite. Finished."
+  ],
+  daddy:[
+    "He nods slowly. 'Right.' You've been filed away.",
+    "He picks up his drink. Subject closed.",
+    "He looks away first. Not angry. Just done with that.",
+    "A pause that goes one second too long. You lost it.",
+    "'Sure.' The most diplomatic dismissal possible.",
+    "He smiles — small, patient. He's heard that before.",
+    "He uncrosses and recrosses his arms. Resetting."
+  ],
+  cub:[
+    "He laughs — but the nervous one. 'Ha. Yeah, totally.'",
+    "He reaches for his drink. Gives himself somewhere to look.",
+    "'Okay sure—' Then changes the subject. Gone.",
+    "He nods a bit too enthusiastically. Covering.",
+    "He glances at his phone. Just for a second. Enough.",
+    "'That's— yeah.' He trails off. You lost the thread.",
+    "He shifts back half an inch. Didn't mean to. Did."
+  ],
+  otter:[
+    "He's already reacting to something across the room.",
+    "'Yeah—' He's moving on. You didn't catch him.",
+    "He smiles, but keeps going. Didn't land.",
+    "He puts more space between you. Casual. Not.",
+    "He picks up speed again. You lost him.",
+    "'Ha.' Flat. Next topic.",
+    "His eyes go to the room. You were interesting. Past tense."
+  ]
+};
+
+const TWEETS=[
+  {min:25,  text:"We couldn’t wait to get home — found a dark corner and started right there. Lucky Bar delivered. Think you can do better?\n\nstoriestobear.itch.io/bearmoves"},
+  {min:15,  text:"He invited me back to his. Lucky Bar, one bear at a time. Your turn.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:5,   text:"He gave me his number. Said see you. Lucky Bar — where maybe means something.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:0,   text:"He said I was cool. Just cool. Lucky Bar humbled me tonight. Prove you’d do better.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:-4,  text:"I thought I had him. I didn’t. The bar saw everything. So did he.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:-14, text:"He left while I was mid-sentence. Mid. Sentence. Lucky Bar is not for the weak.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:-24, text:"He walked out with someone else. I watched it happen. In real time.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:-50, text:"I wasn’t even a player tonight. Lucky Bar happened. I did not.\n\nstoriestobear.itch.io/bearmoves"},
+  {min:-999,text:"Rejected. Tried someone else. Rejected again. And again. Nobody. Lucky Bar destroyed me.\n\nstoriestobear.itch.io/bearmoves"},
+];
+const RESULTS=[
+  {min:25, g:"great",big:"🔥 SMOOTH",   line:"You didn\u2019t even make it home first.",sub:"Maximum score. He didn\u2019t stand a chance."},
+  {min:15, g:"great",big:"😏 SOLID",    line:"He invited you back. You went.",sub:"Your moments landed. He left thinking about you."},
+  {min:5,  g:"ok",   big:"🤔 DECENT",   line:"He gave you his number. Said see you.",sub:"Positive territory. He\u2019s curious."},
+  {min:0,  g:"ok",   big:"😬 CLOSE",    line:"He said you were cool. Just cool.",sub:"Around zero. Warm but noncommittal."},
+  {min:-4, g:"ok",   big:"😬 ROUGH",    line:"You thought you had him. You didn\u2019t.",sub:"Just below zero. The bar saw everything."},
+  {min:-14,g:"bad",  big:"💀 ROUGH",    line:"He left while you were mid-sentence.",sub:"Lucky Bar is not for the weak."},
+  {min:-24,g:"bad",  big:"💀 BRUTAL",   line:"He walked out with someone else.",sub:"You watched it happen. In real time."},
+  {min:-50,g:"bad",  big:"💀 DISASTER", line:"You weren\u2019t even a player tonight.",sub:"Don\u2019t talk about it. Just play again."},
+  {min:-999,g:"bad", big:"💀 DESTROYED",line:"Rejected. Again and again.",sub:"Lucky Bar destroyed you. Completely."},
+];
+
+let S={};let timer=null;let audioCtx=null;
+function ga(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function tone(f,t,d,v,dl=0){try{const c=ga();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dl);g.gain.setValueAtTime(0,c.currentTime+dl);g.gain.linearRampToValueAtTime(v,c.currentTime+dl+0.01);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dl+d);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+0.05);}catch(e){}}
+function sfxRoll(){for(let i=0;i<8;i++)tone(180+Math.random()*300,'square',0.04,0.035,i*0.06);}
+function sfxLand(){tone(160,'square',0.06,0.12);tone(120,'square',0.08,0.08,0.07);}
+function sfxPos(){tone(523,'sine',0.1,0.14);tone(659,'sine',0.13,0.13,0.1);tone(784,'sine',0.18,0.1,0.2);}
+function sfxNeg(){tone(200,'sawtooth',0.14,0.11);tone(160,'sawtooth',0.18,0.09,0.12);}
+function sfxTimeout(){tone(320,'sine',0.09,0.09);tone(270,'sine',0.11,0.09,0.1);tone(230,'sine',0.16,0.07,0.21);}
+function flash(t){const el=document.getElementById('flash');el.className='';void el.offsetWidth;el.className=t;}
+function startTimer(){stopTimer();S.tLeft=S.tsecs;drawTimer();timer=setInterval(()=>{S.tLeft--;drawTimer();if(S.tLeft<=0){stopTimer();doTimeout();}},1000);}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+function drawTimer(){const tv=document.getElementById('timer-num');const tb=document.getElementById('timer-bar');if(!tv||!tb)return;const p=(S.tLeft/S.tsecs)*100;tv.textContent=S.tLeft;tb.style.width=p+'%';const w=S.tLeft<=6;tv.className='timer-num'+(w?' warn':'');tb.className='timer-bar'+(S.tLeft<=3?' crit':w?' warn':'');}
+function doTimeout(){if(S.rolled)return;sfxTimeout();flash('fl-time');S.rolled=true;S.lastResult='neg';document.querySelectorAll('.choice').forEach(b=>b.disabled=true);S.diceTimeout=true;S.choiceRisk='reckless';document.body.classList.add('blur-active');setTimeout(()=>document.body.classList.remove('blur-active'),700);openDice(true);setTimeout(()=>autoRoll(),700);}
+function autoRoll(){const face=document.getElementById('dice-face');face.classList.add('rolling');sfxRoll();let ticks=0;const iv=setInterval(()=>{face.textContent=DF[Math.floor(Math.random()*6)];ticks++;if(ticks>10){clearInterval(iv);face.classList.remove('rolling');face.textContent=DF[0];sfxLand();setTimeout(()=>showDiceResult(1),180);}},60);}
+function openDice(isTimeout){document.getElementById('dice-overlay').classList.remove('hidden');document.getElementById('dice-result').classList.add('hidden');document.getElementById('dice-outcome').classList.add('hidden');document.getElementById('dice-next-btn').classList.add('hidden');document.getElementById('dice-doubled').classList.add('hidden');document.getElementById('dice-face').textContent='\uD83C\uDFB2';document.getElementById('dice-prompt').textContent=isTimeout?"Time\u2019s up...":'Tap to roll';S.diceRolled=false;}
+function rollDice(){if(S.diceRolled||S.diceTimeout)return;S.diceRolled=true;sfxRoll();const face=document.getElementById('dice-face');face.classList.add('rolling');const rd=RISK[S.choiceRisk]||RISK.medium;let ticks=0;const iv=setInterval(()=>{face.textContent=DF[Math.floor(Math.random()*6)];ticks++;if(ticks>11){clearInterval(iv);face.classList.remove('rolling');const roll=rd.range[Math.floor(Math.random()*rd.range.length)];face.textContent=DF[roll-1];sfxLand();setTimeout(()=>showDiceResult(roll),180);}},60);}
+function showDiceResult(roll){const rd=RISK[S.choiceRisk]||RISK.medium;const posRoll=Math.max(...rd.range);const isPos=!S.diceTimeout&&(roll===posRoll);let pts=S.diceTimeout?-10:isPos?rd.pos:rd.neg;const wasDoubled=!!S.jokerNextDouble;if(wasDoubled){pts=pts*2;S.jokerNextDouble=false;}document.getElementById('dice-prompt').textContent='';document.getElementById('dice-result').classList.remove('hidden');const cls=S.diceTimeout?'neu':isPos?'pos':'neg';document.getElementById('dice-pts').className='dice-pts '+cls;document.getElementById('dice-pts').textContent=(pts>0?'+':'')+pts;document.getElementById('dice-verdict').className='dice-verdict '+cls;document.getElementById('dice-verdict').textContent=S.diceTimeout?'Moment missed':isPos?'Nice move \u2713':'That missed';if(wasDoubled)document.getElementById('dice-doubled').classList.remove('hidden');if(isPos)S.wins++;else S.losses++;S.lastResult=isPos?'pos':'neg';S.score+=pts;S.mood+=pts;drawHUD();flash(S.diceTimeout?'fl-time':isPos?'fl-pos':'fl-neg');if(!S.diceTimeout){isPos?sfxPos():sfxNeg();}const ht=S.himType||'gym';const pool=isPos?POS_OUTCOMES[ht]:NEG_OUTCOMES[ht];const text=ipl(pool[Math.floor(Math.random()*pool.length)]);setTimeout(()=>{const ob=document.getElementById('dice-outcome');ob.className='dice-outcome '+(S.diceTimeout?'neu':isPos?'pos':'neg');ob.classList.remove('hidden');document.getElementById('dice-outcome-label').textContent=S.diceTimeout?'You froze.':isPos?'It worked.':'That missed.';document.getElementById('dice-outcome-body').textContent=text;const nb=document.getElementById('dice-next-btn');nb.textContent=S.round<9?'Next round \u2192':'See your result \u2192';nb.classList.remove('hidden');},500);}
+function closeDiceNext(){document.getElementById('dice-overlay').classList.add('hidden');S.round++;if(S.round>=10)showResult();else renderRound();}
+function drawHUD(){const sc=S.score||0;const mn=document.getElementById('meter-num');mn.textContent=(sc>0?'+':'')+sc;mn.style.color=sc>5?'var(--green2)':sc<-5?'var(--red2)':'var(--amber)';const pct=Math.max(2,Math.min(98,((sc+35)/70)*100));document.getElementById('meter-bar').style.width=pct+'%';const ms=S.mood||0;const lvl=[...MOODS].reverse().find(l=>ms>=l.min)||MOODS[0];const mf=document.getElementById('mood-emoji');if(mf.textContent!==lvl.f){mf.style.transform='scale(1.3)';setTimeout(()=>mf.style.transform='',300);}mf.textContent=lvl.f;document.getElementById('mood-him').textContent=S.himName||'\u2014';const vb=VIBES[S.himType]||VIBES.gym;document.getElementById('mood-vibe').textContent=ms<-2?vb.c:ms<8?vb.w:vb.h;}
+function ip(str){return(str||'').replace(/{Y}/g,`<span class="him-name">${S.yourName||''}\x3C/span>`).replace(/{H}/g,`<span class="him-name">${S.himName||''}\x3C/span>`);}
+function ipl(str){return(str||'').replace(/{Y}/g,S.yourName||'').replace(/{H}/g,S.himName||'');}
+function renderRound(){S.chosen=null;S.rolled=false;S.diceRolled=false;S.choiceRisk='medium';S.diceTimeout=false;const ht=S.himType||'gym';const rounds=SCENES[ht];const r=rounds[S.round];drawHUD();stopTimer();const ms=S.mood||0;const mk=ms>=8?'hot':ms>=-2?'warm':'cold';const opener=S.round===0?r.m[mk]:r.mem[S.lastResult==='pos'?'pos':'neg'];const pd=document.getElementById('prog-dots');pd.innerHTML='';for(let i=0;i<10;i++){const d=document.createElement('div');d.className='prog-dot'+(i<S.round?' done':i===S.round?' now':'');pd.appendChild(d);}document.getElementById('prog-label').textContent=`${S.round+1}/10`;document.getElementById('scene-tag').textContent=`Round ${S.round+1} \u00b7 Lucky Bar`;const sb=document.getElementById('scene-box');const glowK=ms>=8?'glow-hot':ms>=-2?'glow-warm':'glow-cold';sb.classList.remove('up','glow-warm','glow-hot','glow-cold');void sb.offsetWidth;sb.classList.add('up',glowK);document.getElementById('scene-text').innerHTML=`<em style="color:var(--text2);font-size:13px">${ip(opener)}\x3C/em><br><br>${ip(r.s)}`;const ca=document.getElementById('choices-area');ca.innerHTML='';r.c.forEach((c,i)=>{const btn=document.createElement('button');btn.className='choice';const rl=RISK[c.r]||{label:'',cls:''};btn.innerHTML=`<span class="ch-icon">${c.e}\x3C/span><div class="ch-body"><div class="ch-text">${ipl(c.t)}\x3C/div><div class="ch-tag ${rl.cls}">${rl.label}\x3C/div>\x3C/div>`;btn.onclick=()=>choicePick(i,btn,c.r||'medium');ca.appendChild(btn);});const jb=document.getElementById('btn-joker');if(jb){jb.disabled=S.jokerUsed;if(S.jokerUsed)jb.classList.add('used');}startTimer();}
+function choicePick(idx,btn,risk){if(S.rolled)return;stopTimer();S.chosen=idx;S.choiceRisk=risk;document.querySelectorAll('.choice').forEach(b=>{b.classList.remove('chosen');b.disabled=true;});btn.classList.add('chosen');S.rolled=true;openDice(false);}
+function initJoker(){S.jokerUsed=false;S.jokerNextDouble=false;const jb=document.getElementById('btn-joker');if(jb){jb.disabled=false;jb.classList.remove('used');jb.textContent='\uD83D\uDC8A Use Drugs \u00a0\u00b7\u00a0 doubles this round\u2019s dice';}}
+function useJoker(){if(S.jokerUsed||S.rolled)return;S.jokerUsed=true;S.jokerNextDouble=true;const jb=document.getElementById('btn-joker');if(jb){jb.disabled=true;jb.classList.add('used');jb.textContent='\uD83D\uDC8A Used \u2014 this round\u2019s result is doubled';}flash('fl-pos');sfxPos();}
+function confirmRestart(){document.getElementById('restart-confirm').classList.remove('hidden');}
+const BIN_ID='6a1b1b4bddf5aa59f778f58c';
+const BIN_KEY='$2a$10$GX3kiILuIYl4gPhuHI6kWOvKT72UAfOWn8qB8C9RKjdQYp6eWATxe';
+const BIN_URL=`https://api.jsonbin.io/v3/b/${BIN_ID}`;
+function getWeekKey(){const n=new Date();const s=new Date(n.getFullYear(),0,1);const w=Math.ceil(((n-s)/86400000+s.getDay()+1)/7);return`${n.getFullYear()}-W${w}`;}
+async function fetchLB(){try{const r=await fetch(BIN_URL+'/latest',{headers:{'X-Master-Key':BIN_KEY,'X-Bin-Meta':false}});const d=await r.json();const wk=getWeekKey();return(d.scores||[]).filter(e=>e.week===wk);}catch(e){return[];}}
+async function pushLB(entry){try{const r=await fetch(BIN_URL+'/latest',{headers:{'X-Master-Key':BIN_KEY,'X-Bin-Meta':false}});const d=await r.json();let all=d.scores||[];all=all.filter(e=>e.week&&e.week>=getWeekKey().slice(0,4)+'-W01');all.push(entry);all.sort((a,b)=>b.score-a.score);await fetch(BIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':BIN_KEY},body:JSON.stringify({scores:all})});return all.filter(e=>e.week===getWeekKey());}catch(e){return[entry];}}
+function drawLB(id,lb,hi){const el=document.getElementById(id);if(!el)return;if(!lb||!lb.length){el.innerHTML='<div class="lb-empty">No scores yet this week.\x3C/div>';return;}const mc=['g','s','b'];const max=id==='lb-splash'?5:10;el.innerHTML=lb.slice(0,max).map((e,i)=>{const isYou=i===hi;return`<div class="lb-row${isYou?' you':''}"><span class="lb-rank ${mc[i]||''}">${i+1}\x3C/span><div class="lb-info"><div class="lb-name">${e.name}${isYou?'<span class="lb-you-tag">YOU\x3C/span>':''}\x3C/div><div class="lb-detail">${e.youType} \u2192 ${e.himType} \u00b7 ${e.wins}W ${e.losses}L\x3C/div>\x3C/div><span class="lb-score ${e.score<0?'neg':''}">${e.score>0?'+':''}${e.score}\x3C/span>\x3C/div>`;}).join('');}
+async function loadSplashLB(){const lb=await fetchLB();drawLB('lb-splash',lb,-1);const sub=document.getElementById('lb-splash-sub');if(sub)sub.textContent=lb.length?`${lb.length} players this week`:'Be the first this week.';}
+
+
+async function showResult(){const sc=S.score;const res=RESULTS.find(r=>sc>=r.min)||RESULTS[RESULTS.length-1];document.getElementById('res-big').textContent=res.big;document.getElementById('res-big').className='result-big '+res.g;document.getElementById('res-line').textContent=res.line;document.getElementById('res-sub').textContent=res.sub;document.getElementById('st-score').textContent=(sc>0?'+':'')+sc;document.getElementById('st-wins').textContent=S.wins;document.getElementById('st-losses').textContent=S.losses;document.getElementById('tweet-body').textContent=getTweetText(sc);showPage('pg-result');const sub=document.getElementById('lb-result-sub');if(sub)sub.textContent='Saving score...';const entry={name:S.yourName,score:sc,wins:S.wins,losses:S.losses,youType:S.youType,himType:S.himType,week:getWeekKey(),ts:Date.now()};const lb=await pushLB(entry);const myI=lb.findIndex(e=>e.ts===entry.ts);drawLB('lb-result',lb,myI);if(sub)sub.textContent=lb.length?`${lb.length} players this week`:'First score this week!';}
+function showPage(id){document.querySelectorAll('[id^="pg-"]').forEach(e=>e.classList.add('hidden'));const t=document.getElementById(id);if(t)t.classList.remove('hidden');window.scrollTo({top:0,behavior:'instant'});}
+function go(n){const pages=['pg-splash','pg-s1','pg-s2','pg-s3','pg-rules'];showPage(pages[n]);const t=document.getElementById(pages[n]);if(t){t.classList.remove('slidein');void t.offsetWidth;t.classList.add('slidein');}}
+function rnd3(){const c=[...NAMES];const o=[];while(o.length<3){const i=Math.floor(Math.random()*c.length);o.push(c.splice(i,1)[0]);}return o;}
+function buildChips(){const ch=document.getElementById('name-chips');ch.innerHTML='';rnd3().forEach(n=>{const d=document.createElement('div');d.className='name-chip';d.textContent=n;d.onclick=()=>{document.querySelectorAll('.name-chip').forEach(c=>c.classList.remove('active'));d.classList.add('active');document.getElementById('name-field').value='';S.yourName=n;document.getElementById('s1-next').disabled=false;};ch.appendChild(d);});}
+function onNameInput(v){document.querySelectorAll('.name-chip').forEach(c=>c.classList.remove('active'));S.yourName=v.trim()||null;document.getElementById('s1-next').disabled=!S.yourName;}
+function pick(who,type,el){document.getElementById(who+'-grid').querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));el.classList.add('active');S[who+'Type']=type;document.getElementById(who==='you'?'s2-next':'s3-next').disabled=false;}
+function startGame(){if(!S.youType||!S.himType||!S.yourName)return;const f=NAMES.filter(n=>n!==S.yourName);S.himName=f[Math.floor(Math.random()*f.length)];S.tsecs=TIMERS[S.youType]||30;S.round=0;S.score=0;S.wins=0;S.losses=0;S.mood=0;S.chosen=null;S.rolled=false;S.diceRolled=false;S.lastResult=null;S.diceTimeout=false;showPage('pg-game');initJoker();renderRound();}
+function restart(){stopTimer();S={};document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.name-chip').forEach(c=>c.classList.remove('active'));const nf=document.getElementById('name-field');if(nf)nf.value='';['s1-next','s2-next','s3-next'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});buildChips();go(0);}
+
+// ── MUSIC ──
+let musicOn=false;
+function toggleMusic(){
+  const audio=document.getElementById('bg-music');
+  const btn=document.getElementById('music-btn');
+  if(!audio)return;
+  if(musicOn){
+    audio.pause();
+    musicOn=false;
+    btn.textContent='🔇 Music';
+  } else {
+    audio.volume=0.35;
+    audio.play().then(()=>{
+      musicOn=true;
+      btn.textContent='🔊 Music';
+    }).catch(()=>{});
+  }
+}
+// Try autoplay on first interaction
+document.addEventListener('click',function startMusic(){
+  const audio=document.getElementById('bg-music');
+  if(audio&&!musicOn){
+    audio.volume=0.35;
+    audio.play().then(()=>{
+      musicOn=true;
+      const btn=document.getElementById('music-btn');
+      if(btn)btn.textContent='🔊 Music';
+    }).catch(()=>{});
+  }
+  document.removeEventListener('click',startMusic);
+},{once:true});
+
+
+function shareInstagram(){
+  const canvas=document.createElement('canvas');
+  canvas.width=1080;canvas.height=1920;
+  const ctx=canvas.getContext('2d');
+
+  // Background image
+  const bgImg=new Image();
+  bgImg.crossOrigin='anonymous';
+  bgImg.src='https://raw.githubusercontent.com/storiestobear/bearmoves/main/bg-vertical.jpg';
+  bgImg.onload=function(){
+    ctx.drawImage(bgImg,0,0,1080,1920);
+    // Dark overlay
+    ctx.fillStyle='rgba(9,7,4,0.72)';
+    ctx.fillRect(0,0,1080,1920);
+    // Amber vignette
+    const grad=ctx.createRadialGradient(540,1200,100,540,1200,900);
+    grad.addColorStop(0,'rgba(232,168,48,0.1)');
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,1080,1920);
+    _drawShareCard(ctx,canvas);
+  };
+  bgImg.onerror=function(){
+    ctx.fillStyle='#090704';
+    ctx.fillRect(0,0,1080,1920);
+    _drawShareCard(ctx,canvas);
+  };
+  return;
+  function _drawShareCard(ctx,canvas){
+
+  // Top label
+  ctx.fillStyle='rgba(232,168,48,0.6)';
+  ctx.font='600 32px DM Sans, sans-serif';
+  ctx.letterSpacing='8px';
+  ctx.textAlign='center';
+  ctx.fillText('STORIES TO BEAR PRESENTS', 540, 160);
+
+  // Game title
+  ctx.fillStyle='#e8ddd0';
+  ctx.font='bold 120px Georgia, serif';
+  ctx.letterSpacing='0px';
+  ctx.fillText('BEAR', 540, 340);
+  ctx.fillStyle='#e8a830';
+  ctx.font='italic bold 100px Georgia, serif';
+  ctx.fillText('MOVES', 540, 450);
+
+  // Divider line
+  ctx.strokeStyle='rgba(232,168,48,0.3)';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(200,510);ctx.lineTo(880,510);ctx.stroke();
+
+  // Result big
+  const sc=S.score||0;
+  const res=RESULTS.find(r=>sc>=r.min)||RESULTS[RESULTS.length-1];
+  ctx.fillStyle=res.g==='great'?'#52c47a':res.g==='ok'?'#f5c060':'#e87060';
+  ctx.font='bold 96px Georgia, serif';
+  ctx.textAlign='center';
+  ctx.fillText(res.big, 540, 660);
+
+  // Result line
+  ctx.fillStyle='#e8ddd0';
+  ctx.font='300 44px DM Sans, sans-serif';
+  ctx.fillText(res.line, 540, 760);
+
+  // Stats row
+  const stats=[
+    {label:'Flirt Meter', val:(sc>0?'+':'')+sc},
+    {label:'Wins', val:S.wins},
+    {label:'Misses', val:S.losses}
+  ];
+  stats.forEach((st,i)=>{
+    const x=200+i*280;
+    // box
+    ctx.strokeStyle='rgba(232,168,48,0.15)';
+    ctx.lineWidth=1;
+    ctx.strokeRect(x-80,860,200,160);
+    // value
+    ctx.fillStyle='#e8a830';
+    ctx.font='bold 64px Georgia, serif';
+    ctx.textAlign='center';
+    ctx.fillText(st.val, x+20, 960);
+    // label
+    ctx.fillStyle='rgba(232,168,48,0.5)';
+    ctx.font='300 24px DM Sans, sans-serif';
+    ctx.fillText(st.label.toUpperCase(), x+20, 995);
+  });
+  ctx.textAlign='center';
+
+  // Tweet text (truncated)
+  const tweet=getTweetText(sc);
+  const lines=tweet.split('\n')[0];
+  ctx.fillStyle='rgba(138,130,120,0.8)';
+  ctx.font='italic 34px Georgia, serif';
+  // word wrap
+  const words=lines.split(' ');let line='';let y=1140;
+  words.forEach(w=>{
+    const test=line+w+' ';
+    if(ctx.measureText(test).width>800&&line){
+      ctx.fillText(line.trim(),540,y);line=w+' ';y+=50;
+    } else line=test;
+  });
+  ctx.fillText(line.trim(),540,y);
+
+  // Divider
+  ctx.strokeStyle='rgba(232,168,48,0.2)';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(200,1320);ctx.lineTo(880,1320);ctx.stroke();
+
+  // CTA
+  ctx.fillStyle='#e8a830';
+  ctx.font='500 38px DM Sans, sans-serif';
+  ctx.fillText('Can you do better?', 540, 1420);
+  ctx.fillStyle='rgba(232,168,48,0.6)';
+  ctx.font='300 30px DM Sans, sans-serif';
+  ctx.fillText('storiestobear.itch.io/bearmoves', 540, 1480);
+
+  // Bottom branding
+  ctx.fillStyle='rgba(232,168,48,0.35)';
+  ctx.font='300 24px DM Sans, sans-serif';
+  ctx.fillText('@storiestobear', 540, 1820);
+
+  // Download
+  const link=document.createElement('a');
+  link.download='bearmoves-result.jpg';
+  link.href=canvas.toDataURL('image/jpeg',0.82);
+  link.click();
+  } // end _drawShareCard
+}
+
+buildChips();go(0);loadSplashLB();
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+
+
+
+
